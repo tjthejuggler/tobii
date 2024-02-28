@@ -1,0 +1,89 @@
+** ComfyUI startup time: 2024-02-23 14:08:08.202656
+[2024-02-23 14:08] ** Platform: Linux
+[2024-02-23 14:08] ** Python version: 3.10.10 (main, Mar 21 2023, 18:45:11) [GCC 11.2.0]
+[2024-02-23 14:08] ** Python executable: /home/lunkwill/miniconda3/bin/python
+[2024-02-23 14:08] ** Log path: /home/lunkwill/projects/tobii/comfyui.log
+[2024-02-23 14:08] 
+Prestartup times for custom nodes:
+[2024-02-23 14:08]    0.0 seconds: /home/lunkwill/projects/ComfyUI/custom_nodes/ComfyUI-Manager
+[2024-02-23 14:08] 
+[2024-02-23 14:08] Total VRAM 16079 MB, total RAM 63991 MB
+[2024-02-23 14:08] xformers version: 0.0.20
+[2024-02-23 14:08] Set vram state to: NORMAL_VRAM
+[2024-02-23 14:08] Device: cuda:0 NVIDIA GeForce RTX 4090 Laptop GPU : cudaMallocAsync
+[2024-02-23 14:08] VAE dtype: torch.bfloat16
+[2024-02-23 14:08] Using xformers cross attention
+[2024-02-23 14:08] Searge-SDXL v4.3.1 in /home/lunkwill/projects/ComfyUI/custom_nodes/SeargeSDXL
+[2024-02-23 14:08] Traceback (most recent call last):
+  File "/home/lunkwill/projects/ComfyUI/nodes.py", line 1872, in load_custom_node
+    module_spec.loader.exec_module(module)
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/lunkwill/projects/ComfyUI/custom_nodes/was-node-suite-comfyui-main/__init__.py", line 1, in <module>
+    from .WAS_Node_Suite import NODE_CLASS_MAPPINGS
+  File "/home/lunkwill/projects/ComfyUI/custom_nodes/was-node-suite-comfyui-main/WAS_Node_Suite.py", line 37, in <module>
+    from numba import jit
+  File "/home/lunkwill/.local/lib/python3.10/site-packages/numba/__init__.py", line 42, in <module>
+    from numba.np.ufunc import (vectorize, guvectorize, threading_layer,
+  File "/home/lunkwill/.local/lib/python3.10/site-packages/numba/np/ufunc/__init__.py", line 3, in <module>
+    from numba.np.ufunc.decorators import Vectorize, GUVectorize, vectorize, guvectorize
+  File "/home/lunkwill/.local/lib/python3.10/site-packages/numba/np/ufunc/decorators.py", line 3, in <module>
+    from numba.np.ufunc import _internal
+SystemError: initialization of _internal failed without raising an exception
+[2024-02-23 14:08] 
+[2024-02-23 14:08] Cannot import /home/lunkwill/projects/ComfyUI/custom_nodes/was-node-suite-comfyui-main module for custom nodes: initialization of _internal failed without raising an exception
+[2024-02-23 14:08] ------------------------------------------
+[2024-02-23 14:08] [34mComfyroll Studio v1.73 : [92m 170 Nodes Loaded[0m
+[2024-02-23 14:08] ------------------------------------------
+[2024-02-23 14:08] ** For changes, please see patch notes at https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/blob/main/Patch_Notes.md
+[2024-02-23 14:08] ** For help, please see the wiki at https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki
+[2024-02-23 14:08] ------------------------------------------
+/home/lunkwill/projects/ComfyUI/custom_nodes/comfyui_controlnet_aux/node_wrappers/dwpose.py:24: UserWarning: DWPose: Onnxruntime not found or doesn't come with acceleration providers, switch to OpenCV with CPU device. DWPose might run very slowly
+  warnings.warn("DWPose: Onnxruntime not found or doesn't come with acceleration providers, switch to OpenCV with CPU device. DWPose might run very slowly")
+[2024-02-23 14:08] ### Loading: ComfyUI-Impact-Pack (V4.66.4)
+[2024-02-23 14:08] ### Loading: ComfyUI-Impact-Pack (Subpack: V0.4)
+[2024-02-23 14:08] [Impact Pack] Wildcards loading done.
+[2024-02-23 14:08] ### Loading: ComfyUI-Manager (V2.2.3)
+[2024-02-23 14:08] ### ComfyUI Revision: 1917 [d76a04b6] | Released on '2024-01-17'
+[2024-02-23 14:08] FETCH DATA from: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/custom-node-list.json
+[2024-02-23 14:08] FETCH DATA from: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/extension-node-map.json
+[2024-02-23 14:08] FETCH DATA from: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/model-list.json
+[2024-02-23 14:08] FETCH DATA from: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/alter-list.json
+[2024-02-23 14:08] [36mEfficiency Nodes:[0m Attempting to add Control Net options to the 'HiRes-Fix Script' Node (comfyui_controlnet_aux add-on)...[92mSuccess![0m
+[2024-02-23 14:08] 
+Import times for custom nodes:
+[2024-02-23 14:08]    0.0 seconds: /home/lunkwill/projects/ComfyUI/custom_nodes/image-resize-comfyui
+[2024-02-23 14:08]    0.0 seconds: /home/lunkwill/projects/ComfyUI/custom_nodes/comfyui-tooling-nodes
+[2024-02-23 14:08]    0.0 seconds: /home/lunkwill/projects/ComfyUI/custom_nodes/masquerade-nodes-comfyui
+[2024-02-23 14:08]    0.0 seconds: /home/lunkwill/projects/ComfyUI/custom_nodes/ComfyUI_IPAdapter_plus
+[2024-02-23 14:08]    0.0 seconds: /home/lunkwill/projects/ComfyUI/custom_nodes/comfy_PoP
+[2024-02-23 14:08]    0.0 seconds: /home/lunkwill/projects/ComfyUI/custom_nodes/style_aligned_comfy
+[2024-02-23 14:08]    0.0 seconds: /home/lunkwill/projects/ComfyUI/custom_nodes/ComfyUI_UltimateSDUpscale
+[2024-02-23 14:08]    0.0 seconds: /home/lunkwill/projects/ComfyUI/custom_nodes/efficiency-nodes-comfyui
+[2024-02-23 14:08]    0.0 seconds: /home/lunkwill/projects/ComfyUI/custom_nodes/ComfyUI-Manager
+[2024-02-23 14:08]    0.1 seconds: /home/lunkwill/projects/ComfyUI/custom_nodes/SeargeSDXL
+[2024-02-23 14:08]    0.1 seconds: /home/lunkwill/projects/ComfyUI/custom_nodes/comfyui_controlnet_aux
+[2024-02-23 14:08]    0.2 seconds: /home/lunkwill/projects/ComfyUI/custom_nodes/ComfyUI_Comfyroll_CustomNodes
+[2024-02-23 14:08]    0.2 seconds: /home/lunkwill/projects/ComfyUI/custom_nodes/ComfyUI-Impact-Pack
+[2024-02-23 14:08]    0.2 seconds (IMPORT FAILED): /home/lunkwill/projects/ComfyUI/custom_nodes/was-node-suite-comfyui-main
+[2024-02-23 14:08]    0.3 seconds: /home/lunkwill/projects/ComfyUI/custom_nodes/comfyui_milehighstyler
+[2024-02-23 14:08]    1.9 seconds: /home/lunkwill/projects/ComfyUI/custom_nodes/LCM_Inpaint-Outpaint_Comfy
+[2024-02-23 14:08] 
+[2024-02-23 14:08] Traceback (most recent call last):
+[2024-02-23 14:08]   File "/home/lunkwill/projects/ComfyUI/main.py", line 246, in <module>
+[2024-02-23 14:08]     loop.run_until_complete(run(server, address=args.listen, port=args.port, verbose=not args.dont_print_server, call_on_start=call_on_start))
+[2024-02-23 14:08]   File "/home/lunkwill/miniconda3/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+[2024-02-23 14:08]     return future.result()
+[2024-02-23 14:08]   File "/home/lunkwill/projects/ComfyUI/main.py", line 148, in run
+[2024-02-23 14:08]     await asyncio.gather(server.start(address, port, verbose, call_on_start), server.publish_loop())
+[2024-02-23 14:08]   File "/home/lunkwill/projects/ComfyUI/server.py", line 633, in start
+[2024-02-23 14:08]     await site.start()
+[2024-02-23 14:08]   File "/home/lunkwill/miniconda3/lib/python3.10/site-packages/aiohttp/web_runner.py", line 119, in start
+[2024-02-23 14:08]     self._server = await loop.create_server(
+[2024-02-23 14:08]   File "/home/lunkwill/miniconda3/lib/python3.10/asyncio/base_events.py", line 1519, in create_server
+[2024-02-23 14:08]     raise OSError(err.errno, 'error while attempting '
+[2024-02-23 14:08] OSError: [Errno 98] error while attempting to bind on address ('127.0.0.1', 8188): address already in use
+[2024-02-23 14:08] [ComfyUI-Manager] default cache updated: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/custom-node-list.json
+[2024-02-23 14:08] [ComfyUI-Manager] default cache updated: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/model-list.json
+[2024-02-23 14:08] [ComfyUI-Manager] default cache updated: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/alter-list.json
+[2024-02-23 14:08] [ComfyUI-Manager] default cache updated: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/extension-node-map.json

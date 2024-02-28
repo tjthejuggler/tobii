@@ -1,0 +1,2 @@
+we could keep track of past imagery and cycle
+or use the microphone and whisper to adjust it
