@@ -14,7 +14,7 @@ def queue_prompt(prompt_workflow):
     except Exception as e:
         print(f"Failed to send request: {e}")
 
-def create_img(prompt, img_path, img_path_clip):
+def create_img(prompt, img_path, img_path_clip, current_denoise):
 
     # read workflow api data from file and convert it into dictionary 
     # assign to var prompt_workflow
@@ -34,12 +34,16 @@ def create_img(prompt, img_path, img_path_clip):
 
     clip_input_image_file = prompt_workflow["69"]
 
+    denoise_node = prompt_workflow["20"]
+
     filepaths = []
     # for every prompt in prompt_list...
     for index, prompt in enumerate(prompt_list):
 
         # set the text prompt for positive CLIPTextEncode node
         #prompt_pos_node["inputs"]["text"] = prompt
+
+        denoise_node["inputs"]["denoise"] = current_denoise
 
         input_image_file["inputs"]["image"] = img_path
 

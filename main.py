@@ -51,6 +51,9 @@ class ZoomApp:
         self.tk_img = ImageTk.PhotoImage(self.current_img)
         self.image_on_canvas = self.canvas.create_image(0, 0, anchor=tk.NW, image=self.tk_img)
 
+        self.denoise_set_point = 0.35
+        self.current_denoise = 0.35
+
         if self.use_eye_tracking:
             self.start_eye_tracking()
         else:
@@ -173,7 +176,7 @@ class ZoomApp:
                 # time.sleep(1)  # Wait for 1 second before retrying    
                 time.sleep(.01)    
         #time.sleep(.3)           
-        image_gen_new.create_img("high definition, high resolution, matrix, amazing", "/home/lunkwill/projects/tobii/pre_comfy_image.png", "/home/lunkwill/projects/tobii/pre_comfy_clip_image.png") #prompt currently turned off in image_gen_new.py
+        image_gen_new.create_img("high definition, high resolution, matrix, amazing", "/home/lunkwill/projects/tobii/pre_comfy_image.png", "/home/lunkwill/projects/tobii/pre_comfy_clip_image.png", self.current_denoise) #prompt currently turned off in image_gen_new.py
 
     def fade_between_images(self, old_image, new_image, steps=1, transition_time=0.01):
         """Fade from the current image to a new image."""
@@ -200,6 +203,13 @@ class ZoomApp:
             self.canvas.itemconfig(self.image_on_canvas, image=self.tk_img)
             self.canvas.update_idletasks()  # Update canvas
             time.sleep(transition_time / steps)
+
+    def check_if_image_file(self):
+        dir = '/home/lunkwill/projects/ComfyUI/output/my_output/'
+        if os.path.exists(dir):
+            files = os.listdir(dir)
+            if len(files)>0:
+                return True
 
     def update_image(self):
         left, top, right, bottom = 0, 0, 0, 0
@@ -265,6 +275,7 @@ class ZoomApp:
 
         if not self.image_generating and self.shared_state.directory_state == "empty":
             future = self.executor.submit(self.generate_image, avg_x, avg_y)
+            self.current_denoise = (self.current_denoise + self.denoise_set_point) / 2
 
         self.old_image = self.current_img
         
@@ -289,8 +300,15 @@ class ZoomApp:
         process = subprocess.Popen(subprocess_path, shell=True, stdout=slave, stderr=subprocess.PIPE, text=True, bufsize=1)
         os.close(slave)
 
-        threading.Thread(target=self.read_subprocess_output_and_update_gui, args=(master, screen_width, screen_height), daemon=True).start()
+        last_eye_data_time = SharedState()        
+
+
+        #threading.Thread(target=self.watch_last_eye_data_time, args=(master, last_eye_data_time), daemon=True).start()
+
+        threading.Thread(target=self.read_subprocess_output_and_update_gui, args=(master, screen_width, screen_height, last_eye_data_time), daemon=True).start()
         self.master.bind('<Configure>', lambda event: self.get_window_position())
+
+        
 
     # def read_subprocess_output_and_update_gui(self, master_fd, screen_width, screen_height):
     #     global win_x, win_y
@@ -309,19 +327,34 @@ class ZoomApp:
     #             self.position_smoothing.append((image_x, image_y))
     #             self.master.after(0, self.update_image)
 
-    def read_subprocess_output_and_update_gui(self, master_fd, screen_width, screen_height):
+    def watch_last_eye_data_time(self, master_fd, last_eye_data_time):
+        while True:
+            if time.time() - last_eye_data_time.last_eye_data_time > 2:
+                print("No eye data for more than 1 second")
+                self.current_denoise = (1+self.denoise_set_point)/2
+                #make a beep sound
+                sound = 'paplay /usr/share/sounds/freedesktop/stereo/complete.oga'
+                os.system(sound)
+                # Reset the position smoothing
+                # self.position_smoothing = deque(maxlen=9)
+                # self.master.after(0, self.update_image)
+                time.sleep(1)
+
+    def read_subprocess_output_and_update_gui(self, master_fd, screen_width, screen_height, last_eye_data_time):
         global win_x, win_y
         last_time = time.time()  # Initialize the time of the last data point
         timeout = 2.0  # Set the timeout to 1 second (or whatever value you want)
 
         with os.fdopen(master_fd, 'r') as stdout:
             for line in iter(stdout.readline, ''):
+                last_eye_data_time.last_eye_data_time = time.time()
                 current_time = time.time()  # Get the current time
                 if current_time - last_time > timeout:
+                    self.current_denoise = (1+self.denoise_set_point)/2
                     #make a beep sound
-                    sound = 'paplay /usr/share/sounds/freedesktop/stereo/complete.oga'
-                    os.system(sound)
-                    print("Timeout: More than {} seconds since the last data point".format(timeout))
+                    # sound = 'paplay /usr/share/sounds/freedesktop/stereo/complete.oga'
+                    # os.system(sound)
+                    print("Original Timeout: More than {} seconds since the last data point".format(timeout))
 
                 last_time = current_time  # Update the time of the last data point
 
@@ -346,6 +379,7 @@ class ZoomApp:
 class SharedState:
     def __init__(self):
         self.directory_state = "empty"
+        self.last_eye_data_time = 0
 
 class CropHelper:
     def __init__(self):
