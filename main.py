@@ -6,6 +6,8 @@ import os
 import pty
 from collections import deque
 import time
+from pathlib import Path
+import random
 
 import image_gen_new
 import _directory_watchdog
@@ -30,7 +32,7 @@ class ZoomApp:
 
         self.master = master
         self.use_eye_tracking = use_eye_tracking
-        self.zoom_level = 1.003  # Adjust zoom level as needed
+        self.zoom_level = 1.01  # Adjust zoom level as needed
         self.original_image_path = original_image_path
         self.current_img = Image.open(self.original_image_path)
         self.canvas = tk.Canvas(master, width=dimensions, height=dimensions)
@@ -135,7 +137,20 @@ class ZoomApp:
 
         return cropped_img
 
+    def blend_images(self):
+        # Ensure both images are the same size
+        img1 = self.current_img.resize(self.old_image.size)
+
+        # Blend the images
+        blended_img = Image.blend(img1, self.old_image, alpha=0.5)
+
+        return blended_img
+
     def generate_image(self, avg_x, avg_y):
+        #use PIL.Image.blend to combine the two images self.current_img and self.old_image
+
+        #self.current_img = self.blend_images()
+
         success = False
         self.image_generating = True
         #resize the image to 512x512
@@ -216,10 +231,25 @@ class ZoomApp:
 
             #left, top, right, bottom = crop_helper.calculate_averages()
             
-            files = os.listdir('/home/lunkwill/projects/ComfyUI/output/my_output')
-            #print("files", files)
-            for file in files:
-                os.remove('/home/lunkwill/projects/ComfyUI/output/my_output/' + file)
+            # files = os.listdir('/home/lunkwill/projects/ComfyUI/output/my_output')
+            # #print("files", files)
+            # for file in files:
+            #     os.remove('/home/lunkwill/projects/ComfyUI/output/my_output/' + file)
+
+
+            
+
+            # Define the directory
+            output_dir = Path('/home/lunkwill/projects/ComfyUI/output/my_output')
+
+            # Iterate over each item in the directory
+            for item in output_dir.iterdir():
+                # Check if it is a file
+                if item.is_file():
+                    item.unlink()  # Delete the file
+                    
+
+
             self.xy_backlog = []
         avg_x, avg_y = self.calculate_average_position()
         left, top, right, bottom = self.handle_eyemovement([avg_x, avg_y])
@@ -229,24 +259,15 @@ class ZoomApp:
             self.xy_backlog.append([avg_x, avg_y])
         self.tk_img = ImageTk.PhotoImage(self.current_img)
         
-        #self.fade_between_images(self.old_image, self.current_img, steps=10, transition_time=0.01)
+        #self.fade_between_images(self.old_image, self.current_img, steps=5, transition_time=1)
         self.canvas.itemconfig(self.image_on_canvas, image=self.tk_img)
-        #self.old_image = self.current_img
+        
 
         if not self.image_generating and self.shared_state.directory_state == "empty":
-            # thread = threading.Thread(target=self.generate_image, args=([avg_x, avg_y]))
-            # thread.start()
-
-            #self.executor.submit(self.generate_image, args=([[avg_x, avg_y]]))
             future = self.executor.submit(self.generate_image, avg_x, avg_y)
 
-            # self.image_generating = True
-            # self.current_img.save("/home/lunkwill/projects/tobii/pre_comfy_image.png")
-            # time.sleep(.3)           
-            # image_gen_new.create_img("cat", "/home/lunkwill/projects/tobii/pre_comfy_image.png")
-            
-
-
+        self.old_image = self.current_img
+        
         if not self.use_eye_tracking:
             self.master.after(100, self.update_image)
 
@@ -271,10 +292,39 @@ class ZoomApp:
         threading.Thread(target=self.read_subprocess_output_and_update_gui, args=(master, screen_width, screen_height), daemon=True).start()
         self.master.bind('<Configure>', lambda event: self.get_window_position())
 
+    # def read_subprocess_output_and_update_gui(self, master_fd, screen_width, screen_height):
+    #     global win_x, win_y
+    #     with os.fdopen(master_fd, 'r') as stdout:
+    #         for line in iter(stdout.readline, ''):
+    #             parts = line.split(":")
+    #             numbers = parts[1].split(",")
+
+    #             x = float(numbers[0]) * screen_width
+    #             y = float(numbers[1]) * screen_height
+
+    #             image_x = x - win_x
+    #             image_y = y - win_y
+
+    #             # Update smoothed position
+    #             self.position_smoothing.append((image_x, image_y))
+    #             self.master.after(0, self.update_image)
+
     def read_subprocess_output_and_update_gui(self, master_fd, screen_width, screen_height):
         global win_x, win_y
+        last_time = time.time()  # Initialize the time of the last data point
+        timeout = 2.0  # Set the timeout to 1 second (or whatever value you want)
+
         with os.fdopen(master_fd, 'r') as stdout:
             for line in iter(stdout.readline, ''):
+                current_time = time.time()  # Get the current time
+                if current_time - last_time > timeout:
+                    #make a beep sound
+                    sound = 'paplay /usr/share/sounds/freedesktop/stereo/complete.oga'
+                    os.system(sound)
+                    print("Timeout: More than {} seconds since the last data point".format(timeout))
+
+                last_time = current_time  # Update the time of the last data point
+
                 parts = line.split(":")
                 numbers = parts[1].split(",")
 
@@ -328,6 +378,19 @@ def on_closing():
     app.shutdown()
     root.destroy()
 
+def get_random_image(dir_path):
+    # Get a list of all files in the directory
+    files = os.listdir(dir_path)
+
+    # Filter out any non-image files
+    images = [file for file in files if file.endswith(('.png', '.jpg', '.jpeg'))]
+
+    # Select a random image
+    random_image = random.choice(images)
+
+    # Return the full path of the random image
+    return os.path.join(dir_path, random_image)
+
 # Usage example
 if __name__ == "__main__":
     #delete any remainging files in the output directory
@@ -349,7 +412,11 @@ if __name__ == "__main__":
     root.title("Eye Tracking Zoom")
     root.protocol("WM_DELETE_WINDOW", on_closing)
 
-    image_path = '/home/lunkwill/Pictures/Wallpapers/ai_art/_The_grungy_girl\'s_face_lights_up_as_she_explains__0_0.png'
+    #use the random library to choose an image in here 
+    
+    dir_path = '/home/lunkwill/Pictures/Wallpapers/ai_art'
+    image_path = get_random_image(dir_path)
+    
 
     #create a new image with the dimensions variable and the image_path
     img = Image.open(image_path)
